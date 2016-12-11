@@ -37,10 +37,14 @@ namespace FindFolks.Models
 
     public class LoginViewModel
     {
+//        [Required]
+//        [EmailAddress]
+//        [Display(Name = "Email")]
+//        public string Email { get; set; }
+
         [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Display(Name = "Username")]
+        public string Username { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -53,6 +57,22 @@ namespace FindFolks.Models
 
     public class RegisterViewModel
     {
+        [Required]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
+        [Required]
+        [Display(Name = "First name")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [Display(Name = "Last name")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "Zip code")]
+        public string ZipCode { get; set; }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]

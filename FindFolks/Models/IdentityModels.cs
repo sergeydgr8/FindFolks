@@ -13,8 +13,17 @@ namespace FindFolks.Models
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
             // Add custom user claims here
+//            userIdentity.AddClaim(new Claim("Username", this.Username.ToString()));
+            userIdentity.AddClaim(new Claim("FirstName", this.FirstName.ToString()));
+            userIdentity.AddClaim(new Claim("LastName", this.LastName.ToString()));
+            userIdentity.AddClaim(new Claim("ZipCode", this.ZipCode.ToString()));
             return userIdentity;
         }
+
+//        public string Username { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string ZipCode { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
