@@ -1,31 +1,47 @@
-﻿@{
+﻿@model FindFolks.Models.HomeIndexViewModel
+@{
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>FindFolks</h1>
-    <p class="lead">FindFolks is an application to organize groups of people with common interests, announce events these groups are hosting, and gather feedback on the events.</p>
-    <p><a href="@Url.Action(MVC.Account.Register())" class="btn btn-primary btn-lg">Sign up today &raquo;</a> <a href="@Url.Action(MVC.Account.Login())" class="btn btn-success btn-lg">Already signed up? Login here &raquo;</a></p>
-</div>
+@if (!Request.IsAuthenticated)
+{
+    <div class="jumbotron">
+        <h1>FindFolks</h1>
+        <p class="lead">FindFolks is an application to organize groups of people with common interests, announce events these groups are hosting, and gather feedback on the events.</p>
+        <p><a href="@Url.Action(MVC.Account.Register())" class="btn btn-primary btn-lg">Sign up today &raquo;</a> <a href="@Url.Action(MVC.Account.Login())" class="btn btn-success btn-lg">Already signed up? Login here &raquo;</a></p>
+    </div>
+}
+else
+{
+    <div class="jumbotron">
+        <h1>Hello, @Model.FirstName!</h1>
+    </div>
+}
 
 <div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+    <div class="col-md-6">
+        <h3>Upcoming events in the next three days:</h3>
+        @if (Model.UpcomingEvents == null || Model.UpcomingEvents.Count() == 0)
+        {
+            <h4>There are currently no upcoming events.</h4>
+        }
+        else
+        {
+            <ul class="list-group">
+                @foreach (var e in Model.UpcomingEvents)
+                {
+                    <li class="list-group-item">@e.Start.ToShortDateString(): @e.Title</li>
+                }
+            </ul>
+        }
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    <div class="col-md-6">
+        <h3>Interests that might interest you:</h3>
+        <ul class="list-group">
+            @foreach (var i in Model.Interests)
+            {
+                <li class="list-group-item">@i.Category: @i.Keyword <span class="pull-right">test</span></li>
+            }
+        </ul>
     </div>
 </div>

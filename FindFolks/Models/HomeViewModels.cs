@@ -7,10 +7,10 @@ using FindFolks.EF;
 
 namespace FindFolks.Models
 {
-    public class HomeIndexModel
+    public class HomeIndexViewModel
     {
         public List<Event> UpcomingEvents { get; set; }
         public List<Interest> Interests { get; set; }
-        public bool LoggedIn { get; set; }
+        public string FirstName { get; set; }
     }
 }

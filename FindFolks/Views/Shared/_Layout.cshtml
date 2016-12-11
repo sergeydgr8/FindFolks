@@ -21,6 +21,13 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li><a href="#">Groups</a></li>
+                        <li><a href="#">Interests</a></li>
+                        <li><a href="#">Friends</a></li>
+                        <li><a href="#">Events</a></li>
+                    }
                     <li>@Html.ActionLink("About", MVC.Home.About())</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
