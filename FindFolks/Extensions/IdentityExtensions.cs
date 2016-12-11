@@ -9,12 +9,6 @@ namespace FindFolks.Extensions
 {
     public static class IdentityExtensions
     {
-        public static string GetUsername(this IIdentity identity)
-        {
-            var claim = ((ClaimsIdentity)identity).FindFirst("Username");
-            return (claim != null) ? claim.Value : string.Empty;
-        }
-
         public static string GetFirstName(this IIdentity identity)
         {
             var claim = ((ClaimsIdentity)identity).FindFirst("FirstName");

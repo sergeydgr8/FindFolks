@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using FindFolks.EF;
 
 namespace FindFolks.Models
 {
@@ -13,13 +16,14 @@ namespace FindFolks.Models
 
     public class Friend
     {
-        [Key, Column(Order = 1), ForeignKey("ApplicationUser")]
+        [Key, Column(Order = 1), ForeignKey("AUFriendOf")]
         public string FriendOf { get; set; }
 
-        [Key, Column(Order = 2), ForeignKey("ApplicationUser")]
+        [Key, Column(Order = 2), ForeignKey("AUFriendTo")]
         public string FriendTo { get; set; }
 
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        public virtual ApplicationUser AUFriendOf { get; set; }
+        public virtual ApplicationUser AUFriendTo { get; set; }
     }
 
     public class Group
