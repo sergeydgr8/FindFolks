@@ -35,18 +35,6 @@ namespace FindFolks.EF
             modelBuilder.Entity<IdentityRole>().HasKey<string>(l => l.Id);
             modelBuilder.Entity<IdentityUserRole>().HasKey(l => new { l.RoleId, l.UserId });
 
-            /*modelBuilder.Entity<Friend>()
-                .HasRequired(f => f.ApplicationUser1)
-                .WithMany(u => u.Friends)
-                .HasForeignKey(f => f.FriendOf)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Friend>()
-                .HasRequired(f => f.ApplicationUser2)
-                .WithMany(u => u.Friends)
-                .HasForeignKey(f => f.FriendTo)
-                .WillCascadeOnDelete(false);*/
-
             modelBuilder.Entity<Friend>()
                 .HasRequired(f => f.AUFriendOf)
                 .WithMany(u => u.FriendsOf)
