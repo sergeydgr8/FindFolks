@@ -10,10 +10,6 @@ using FindFolks.EF;
 
 namespace FindFolks.Models
 {
-//    public class FFModels
-//    {
-//    }
-
     public class Friend
     {
         [Key, Column(Order = 1), ForeignKey("AUFriendOf")]
