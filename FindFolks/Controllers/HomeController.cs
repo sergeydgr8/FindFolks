@@ -5,18 +5,25 @@ using System.Web;
 using System.Web.Mvc;
 using FindFolks.Models;
 using FindFolks.EF;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace FindFolks.Controllers
 {
     public partial class HomeController : Controller
     {
         private FFContext ffContext = new FFContext();
+        protected UserManager<ApplicationUser> UserManager { get; set; }
 
-        public HomeController() { }
+        public HomeController()
+        {
+            this.UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(this.ffContext));
+        }
 
         public HomeController(FFContext ffContext)
         {
             this.ffContext = ffContext;
+            this.UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(this.ffContext));
         }
 
         public virtual ActionResult Index(HomeIndexViewModel model)
@@ -30,8 +37,8 @@ namespace FindFolks.Controllers
             if (Request.IsAuthenticated)
             {
                 model.FirstName = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().FirstName;
-
-                var UserBelongsIn = ffContext.BelongTos.Where(u => u.UserName == User.Identity.Name).ToList();
+                var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
+                var UserBelongsIn = ffContext.BelongTos.Where(u => u.UserName == UserId).ToList();
                 var GroupIds = new List<int>();
                 foreach (var b in UserBelongsIn)
                     GroupIds.Add(b.GroupId);

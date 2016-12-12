@@ -274,6 +274,7 @@
     <Content Include="Views\Interest\Groups.cshtml" />
     <Content Include="Views\Groups\Index.cshtml" />
     <Content Include="Views\Groups\CreateGroup.cshtml" />
+    <Content Include="Views\Groups\Info.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

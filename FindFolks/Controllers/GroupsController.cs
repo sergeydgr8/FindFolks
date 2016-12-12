@@ -30,6 +30,10 @@ namespace FindFolks.Controllers
             if (model == null)
                 model = new GroupIndexModel();
             model.Groups = ffContext.Groups.ToList();
+            foreach (var g in model.Groups)
+            {
+                g.GroupCreator = ffContext.Users.Where(u => u.Id == g.GroupCreator).FirstOrDefault().UserName;
+            }
             return View(model);
         }
 
@@ -39,6 +43,12 @@ namespace FindFolks.Controllers
             model.Group = ffContext.Groups.Where(g => g.GroupId == Id).FirstOrDefault();
             if (model.Group == null)
                 return RedirectToAction("Index");
+            model.GroupCreator = ffContext.Users.Where(u => u.Id == model.Group.GroupCreator).FirstOrDefault().UserName;
+            var MemberBT = ffContext.BelongTos.Where(b => b.GroupId == model.Group.GroupId).ToList();
+            var MemberIds = new List<string>();
+            foreach (var m in MemberBT)
+                MemberIds.Add(m.UserName);
+            model.Members = ffContext.Users.Where(u => MemberIds.Contains(u.Id)).ToList();
             return View(model);
         }
 
@@ -86,8 +96,17 @@ namespace FindFolks.Controllers
                 GroupId = NewGroup.GroupId
             };
             ffContext.Abouts.Add(NewAbout);
+            var NewBelongsTo = new BelongsTo()
+            {
+                GroupId = NewGroup.GroupId,
+                UserName = User.Identity.Name,
+                Authorized = true,
+                Group = NewGroup,
+                ApplicationUser = UserManager.FindByName(User.Identity.Name)
+            };
+            ffContext.BelongTos.Add(NewBelongsTo);
             ffContext.SaveChanges();
-            return Info(NewGroup.GroupId);
+            return RedirectToAction("Info", new { id = NewGroup.GroupId });
 
 
         }

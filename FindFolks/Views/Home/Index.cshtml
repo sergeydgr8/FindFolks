@@ -28,7 +28,7 @@ else
                     <div class="list-group">
                         @foreach (var group in Model.UserGroups)
                         {
-                            <a class="list-group-item" href="@Url.Action("GroupInfo", "Groups", group)">@group.GroupName</a>
+                            <a class="list-group-item" href="@Url.Action("Info", "Groups", new { id = group.GroupId })">@group.GroupName</a>
                         }
                     </div>
                 }

@@ -1,0 +1,23 @@
+﻿@model FindFolks.Models.GroupInfoModel
+@{
+    ViewBag.Title = Model.Group.GroupName;
+}
+
+<h2>@Model.Group.GroupName</h2>
+<h4>@Model.Group.GroupDescription</h4>
+<h4>Created by @Model.GroupCreator</h4>
+
+<div class="row">
+    <div class="col-md-3">
+        <h3>Members:</h3>
+        <div class="list-group">
+            @foreach (var u in Model.Members)
+            {
+                <a href="#" class="list-group-item">
+                    <h4 class="list-group-item-heading">@u.LastName, @u.FirstName</h4>
+                    <p class="list-group-item-text">@u.UserName</p>
+                </a>
+            }
+        </div>
+    </div>
+</div>
