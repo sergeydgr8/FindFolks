@@ -104,7 +104,7 @@
     }
     @foreach (var l in locationDictionary)
     {
-        @:{ locations["@l.Key"] = { Name: "@l.Value.LocationName", Description: "@l.Value.Description", Address: "@l.Value.Address", ZipCode: "@l.Value.ZipCode", Latitude: "@l.Value.Latitude", Longitude: "@l.Value.Longitude" } }
+        @:locations["@l.Key"] = { Name: "@l.Value.LocationName", Description: "@l.Value.Description", Address: "@l.Value.Address", ZipCode: "@l.Value.ZipCode", Latitude: "@l.Value.Latitude", Longitude: "@l.Value.Longitude" }
     }
     $(function () {
         $('#LocationDropdown').change(function () {

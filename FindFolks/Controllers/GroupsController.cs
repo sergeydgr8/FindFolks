@@ -165,14 +165,64 @@ namespace FindFolks.Controllers
             return RedirectToAction("Info", new { id = model.GroupId });
         }
 
-        public ActionResult CreateEvent(CreateEventModel model)
+        public ActionResult CreateEvent(int GroupId)
         {
-            if (model == null)
-                model = new CreateEventModel();
+            var model = new CreateEventModel();
+            model.GroupId = GroupId;
             model.Locations = ffContext.Locations.ToList();
             model.Start = DateTime.Now;
             model.End = DateTime.Now.AddHours(3);
             return PartialView(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateEvent(CreateEventModel model)
+        {
+            var LocationExists = ffContext.Locations.Where(l => l.LocationName == model.LocationName && l.ZipCode == model.ZipCode).FirstOrDefault();
+            if (LocationExists == null)
+            {
+                var NewLoc = new Location()
+                {
+                    LocationName = model.LocationName,
+                    ZipCode = model.ZipCode,
+                    Address = model.Address,
+                    Description = model.LocationDescription,
+                    Latitude = model.Latitude,
+                    Longitude = model.Longitude
+                };
+                ffContext.Locations.Add(NewLoc);
+                ffContext.SaveChanges();
+            }
+
+            var NewEvent = new Event();
+            NewEvent.Title = model.Title;
+            NewEvent.Description = model.Description;
+            NewEvent.Start = model.Start;
+            NewEvent.End = model.End;
+            NewEvent.Location = ffContext.Locations.Where(l => l.LocationName == model.LocationName && l.ZipCode == model.ZipCode).FirstOrDefault();
+            NewEvent.LocationName = model.LocationName;
+            NewEvent.ZipCode = model.ZipCode;
+            ffContext.Events.Add(NewEvent);
+            ffContext.SaveChanges();
+
+            var NewOrganizes = new Organize();
+            NewOrganizes.Event = NewEvent;
+            NewOrganizes.EventId = NewEvent.EventId;
+            NewOrganizes.Group = ffContext.Groups.Where(g => g.GroupId == model.GroupId).FirstOrDefault();
+            NewOrganizes.GroupId = model.GroupId;
+            ffContext.Organizes.Add(NewOrganizes);
+            ffContext.SaveChanges();
+
+            var SignsUp = new SignUp();
+            SignsUp.ApplicationUser = UserManager.FindByName(User.Identity.Name);
+            SignsUp.Event = NewEvent;
+            SignsUp.UserName = User.Identity.Name;
+            SignsUp.EventId = NewEvent.EventId;
+            ffContext.SignUps.Add(SignsUp);
+            ffContext.SaveChanges();
+
+            return RedirectToAction("Info", new { Id = model.GroupId });
         }
     }
 }

@@ -78,7 +78,7 @@
                     <h4 class="modal-title">Create event for @Model.Group.GroupName</h4>
                 </div>
                 <div class="modal-body">
-                    @Html.Action("CreateEvent", "Groups", new FindFolks.Models.CreateEventModel() {  GroupId = Model.Group.GroupId })
+                    @Html.Action("CreateEvent", "Groups", new { GroupId = Model.Group.GroupId })
                     @*@{Html.Partial("CreateEvent", new FindFolks.Models.CreateEventModel() { GroupId = Model.Group.GroupId });}*@
                 </div>
             </div>
