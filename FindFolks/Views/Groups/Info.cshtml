@@ -46,10 +46,42 @@
             @foreach (var u in Model.Members)
             {
                 <a href="#" class="list-group-item">
+                @if (u.Authorized)
+                {
+                    <span class="pull-right"><i class="fa fa-star fa-fw"></i></span>
+                }
                     <h4 class="list-group-item-heading">@u.LastName, @u.FirstName</h4>
                     <p class="list-group-item-text">@u.UserName</p>
                 </a>
             }
         </div>
     </div>
+    <div class="col-md-6">
+        @if (Model.Authorized)
+        {
+            <span class="pull-right"><button type="button" class="btn btn-default" data-toggle="modal" data-target="#CreateEventModal">Create event</button></span>
+        }
+        <h3>Events</h3>
+    </div>
+    <div class="col-md-3">
+        <h3>Average rating</h3>
+    </div>
 </div>
+
+@if (Model.Authorized)
+{
+    <div class="modal fade" id="CreateEventModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Create event for @Model.Group.GroupName</h4>
+                </div>
+                <div class="modal-body">
+                    @Html.Action("CreateEvent", "Groups", new FindFolks.Models.CreateEventModel() {  GroupId = Model.Group.GroupId })
+                    @*@{Html.Partial("CreateEvent", new FindFolks.Models.CreateEventModel() { GroupId = Model.Group.GroupId });}*@
+                </div>
+            </div>
+        </div>
+    </div>
+}

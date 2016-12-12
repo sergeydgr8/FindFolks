@@ -1,0 +1,123 @@
+﻿@model FindFolks.Models.CreateEventModel
+
+@{
+    var locationItems = new List<SelectListItem>();
+    var locationDictionary = new Dictionary<string, FindFolks.Models.Location>();
+    if (Model.Locations != null)
+    {
+        foreach (var l in Model.Locations)
+        {
+            locationItems.Add(new SelectListItem()
+                {
+                    Text = l.LocationName + " in " + l.ZipCode,
+                    Value = l.ZipCode + ";" + l.LocationName
+                });
+            locationDictionary.Add(l.ZipCode + ";" + l.LocationName, l);
+        }
+    }
+
+}
+
+
+@using(Html.BeginForm("CreateEvent", "Groups", FormMethod.Post, new { role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    
+    @Html.HiddenFor(m => m.GroupId)
+    
+    <div class="form-group">
+        @Html.LabelFor(m => m.Title, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Description, new { @class = "control-label" })
+        @Html.TextAreaFor(m => m.Description, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Start, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.Start, new { @class = "form-control", @id = "StartTimePicker" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.End, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.End, new { @class = "form-control", @id = "EndTimePicker" })
+    </div>
+    
+    <script type="text/javascript">
+        $(function () {
+            $('#StartTimePicker').datetimepicker();
+            $('#EndTimePicker').datetimepicker();
+        });
+    </script>
+    
+    <hr />
+    
+    <div class="form-group">
+        @Html.LabelFor(m => m.Locations, new { @class = "control-label" })
+        @Html.DropDownListFor(m => m.LocationNameAndZip,
+            locationItems, "Select a location", new { @class = "form-control", @id = "LocationDropdown" })
+    </div>
+    
+    <div class="form-group">
+        @Html.LabelFor(m => m.LocationName, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.LocationName, new { @class = "form-control", @id = "LocationName" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.LocationDescription, new { @class = "control-label" })
+        @Html.TextAreaFor(m => m.LocationDescription, new { @class = "form-control", @id = "LocationDescription" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Address, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.Address, new { @class = "form-control", @id = "LocationAddress" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.ZipCode, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.ZipCode, new { @class = "form-control", @id = "LocationZipCode" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Latitude, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.Latitude, new { @class = "form-control", @id = "LocationLatitude" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Longitude, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.Longitude, new { @class = "form-control", @id = "LocationLongitude" })
+    </div>
+    
+    <hr />
+    
+    <button type="submit" class="btn btn-default">Create event</button>
+}
+
+
+<script type="text/javascript">
+    var locations = {};
+    @{
+        var oSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    }
+    @foreach (var l in locationDictionary)
+    {
+        @:{ locations["@l.Key"] = { Name: "@l.Value.LocationName", Description: "@l.Value.Description", Address: "@l.Value.Address", ZipCode: "@l.Value.ZipCode", Latitude: "@l.Value.Latitude", Longitude: "@l.Value.Longitude" } }
+    }
+    $(function () {
+        $('#LocationDropdown').change(function () {
+            if (this.value != null && this.value != "")
+            {
+                var loc = locations[this.value];
+                $('#LocationName').val(loc.Name);
+                $('#LocationDescription').val(loc.Description);
+                $('#LocationAddress').val(loc.Address);
+                $('#LocationZipCode').val(loc.ZipCode);
+                $('#LocationLatitude').val(loc.Latitude);
+                $('#LocationLongitude').val(loc.Longitude);
+            }
+        });
+    });
+</script>

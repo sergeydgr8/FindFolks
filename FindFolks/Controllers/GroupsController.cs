@@ -37,7 +37,7 @@ namespace FindFolks.Controllers
             return View(model);
         }
 
-        public ActionResult Info(int Id)
+        public ActionResult Info(int Id = 0)
         {
             var model = new GroupInfoModel();
             model.Group = ffContext.Groups.Where(g => g.GroupId == Id).FirstOrDefault();
@@ -48,11 +48,24 @@ namespace FindFolks.Controllers
             var MemberIds = new List<string>();
             foreach (var m in MemberBT)
                 MemberIds.Add(m.UserName);
-            model.Members = ffContext.Users.Where(u => MemberIds.Contains(u.Id)).ToList();
+            model.Members = new List<GroupMemberModel>();
+            var members = ffContext.Users.Where(u => MemberIds.Contains(u.Id)).ToList();
+            foreach (var member in members)
+            {
+                var NewMember = new GroupMemberModel();
+                NewMember.FirstName = member.FirstName;
+                NewMember.LastName = member.LastName;
+                NewMember.UserName = member.UserName;
+                NewMember.Authorized = ffContext.BelongTos.Where(u => u.UserName == member.Id && u.GroupId == Id).FirstOrDefault().Authorized;
+                model.Members.Add(NewMember);
+            }
+            //model.Members = ffContext.Users.Where(u => MemberIds.Contains(u.Id)).ToList();
             if (!User.Identity.IsAuthenticated)
                 return View(model);
             var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
             model.IsInGroup = ffContext.BelongTos.Where(b => b.GroupId == model.Group.GroupId && b.UserName == UserId).FirstOrDefault() != null;
+            if (model.IsInGroup)
+                model.Authorized = ffContext.BelongTos.Where(b => b.GroupId == model.Group.GroupId && b.UserName == UserId).FirstOrDefault().Authorized;
             model.JoinGroup = new JoinGroupModel();
             model.JoinGroup.GroupId = model.Group.GroupId;
             model.JoinGroup.UserId = UserId;
@@ -65,6 +78,7 @@ namespace FindFolks.Controllers
             return View();
         }
 
+        // POST: CreateGroup
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateGroup(CreateGroupModel model)
@@ -149,6 +163,16 @@ namespace FindFolks.Controllers
                 ffContext.SaveChanges();
             }
             return RedirectToAction("Info", new { id = model.GroupId });
+        }
+
+        public ActionResult CreateEvent(CreateEventModel model)
+        {
+            if (model == null)
+                model = new CreateEventModel();
+            model.Locations = ffContext.Locations.ToList();
+            model.Start = DateTime.Now;
+            model.End = DateTime.Now.AddHours(3);
+            return PartialView(model);
         }
     }
 }
