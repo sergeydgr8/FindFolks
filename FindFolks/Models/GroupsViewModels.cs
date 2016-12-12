@@ -17,6 +17,8 @@ namespace FindFolks.Models
         public string GroupCreator { get; set; }
         public List<ApplicationUser> Members { get; set; }
         public List<Event> Events { get; set; }
+        public bool IsInGroup { get; set; }
+        public JoinGroupModel JoinGroup { get; set; }
     }
 
     public class CreateGroupModel
@@ -38,5 +40,11 @@ namespace FindFolks.Models
         public string Keyword { get; set; }
 
         public string Creator { get; set; }
+    }
+
+    public class JoinGroupModel
+    {
+        public int GroupId { get; set; }
+        public string UserId { get; set; }
     }
 }

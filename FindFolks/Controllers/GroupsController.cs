@@ -49,6 +49,11 @@ namespace FindFolks.Controllers
             foreach (var m in MemberBT)
                 MemberIds.Add(m.UserName);
             model.Members = ffContext.Users.Where(u => MemberIds.Contains(u.Id)).ToList();
+            var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
+            model.IsInGroup = ffContext.BelongTos.Where(b => b.GroupId == model.Group.GroupId && b.UserName == UserId).FirstOrDefault() != null;
+            model.JoinGroup = new JoinGroupModel();
+            model.JoinGroup.GroupId = model.Group.GroupId;
+            model.JoinGroup.UserId = UserId;
             return View(model);
         }
 
@@ -107,8 +112,41 @@ namespace FindFolks.Controllers
             ffContext.BelongTos.Add(NewBelongsTo);
             ffContext.SaveChanges();
             return RedirectToAction("Info", new { id = NewGroup.GroupId });
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult JoinGroup(JoinGroupModel model)
+        {
+            var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
+            var IsMemberAlready = ffContext.BelongTos.Where(b => b.UserName == UserId && b.GroupId == model.GroupId).FirstOrDefault();
+            if (IsMemberAlready == null)
+            {
+                var NewMembership = new BelongsTo()
+                {
+                    GroupId = model.GroupId,
+                    UserName = User.Identity.Name,
+                    Authorized = false,
+                    Group = ffContext.Groups.Where(g => g.GroupId == model.GroupId).FirstOrDefault(),
+                    ApplicationUser = UserManager.FindByName(User.Identity.Name)
+                };
+                ffContext.BelongTos.Add(NewMembership);
+                ffContext.SaveChanges();
+            }
+            return RedirectToAction("Info", new { id = model.GroupId });
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult LeaveGroup(JoinGroupModel model)
+        {
+            var BelongsTo = ffContext.BelongTos.Where(b => b.UserName == model.UserId && b.GroupId == model.GroupId).FirstOrDefault();
+            if (BelongsTo != null)
+            {
+                ffContext.BelongTos.Remove(BelongsTo);
+                ffContext.SaveChanges();
+            }
+            return RedirectToAction("Info", new { id = model.GroupId });
         }
     }
 }
