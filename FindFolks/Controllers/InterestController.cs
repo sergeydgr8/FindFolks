@@ -8,18 +8,25 @@ using System.Web;
 using System.Web.Mvc;
 using FindFolks.EF;
 using FindFolks.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace FindFolks.Controllers
 {
     public class InterestController : Controller
     {
         private FFContext ffContext = new FFContext();
+        protected UserManager<ApplicationUser> UserManager { get; set; }
 
-        public InterestController() { }
+        public InterestController()
+        {
+            this.UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(this.ffContext));
+        }
 
         public InterestController(FFContext ffContext)
         {
             this.ffContext = ffContext;
+            this.UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(this.ffContext));
         }
 
         // GET: Interest
@@ -28,6 +35,24 @@ namespace FindFolks.Controllers
             if (model == null)
                 model = new InterestViewModel();
             model.Interests = ffContext.Interests.ToList();
+            model.Categories = new List<string>();
+            foreach (var i in model.Interests)
+                if (!model.Categories.Contains(i.Category))
+                    model.Categories.Add(i.Category);
+            if (User.Identity.IsAuthenticated)
+            {
+                var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
+                var UserInterests = ffContext.InterestedIns.Where(i => i.UserName == UserId).ToList();
+                model.UserInterests = new List<Interest>();
+                foreach (var ui in UserInterests)
+                {
+                    model.UserInterests.Add(new Interest()
+                        {
+                            Category = ui.Category,
+                            Keyword = ui.Keyword
+                        });
+                }
+            }
             return View(model);
         }
 
@@ -58,41 +83,58 @@ namespace FindFolks.Controllers
                 Keyword = Keyword
             };
             model.Groups = GetGroupsWithInterest(model.Interest);
+            if (User.Identity.IsAuthenticated)
+            {
+                var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
+                model.HasInterest = ffContext.InterestedIns.Where(i => i.Category == Category && i.Keyword == Keyword && i.UserName == UserId).FirstOrDefault() != null;
+            }
             return View(model);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public virtual ActionResult AddInterest(AddInterestModel model)
         {
-            ffContext.Interests.Add(new Interest()
-                {
-                    Category = model.Category,
-                    Keyword = model.Keyword
-                });
-            ffContext.SaveChanges();
-            var retModel = new GroupsInInterestModel()
+            var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
+            var MemberIsAlready = ffContext.InterestedIns.Where(i => i.Category == model.Category && i.Keyword == model.Keyword && i.UserName == UserId).FirstOrDefault();
+            if (MemberIsAlready == null)
             {
-                Interest = new Interest()
+                var NewInterest = new InterestedIn()
                 {
                     Category = model.Category,
-                    Keyword = model.Keyword
-                },
-                Groups = GetGroupsWithInterest(new Interest()
-                {
-                    Category = model.Category,
-                    Keyword = model.Keyword
-                })
-            };
-            return RedirectToAction("Group", retModel);
-
+                    Keyword = model.Keyword,
+                    UserName = UserId,
+                    Interest = ffContext.Interests.Where(i => i.Category == model.Category && i.Keyword == model.Keyword).FirstOrDefault(),
+                    ApplicationUser = UserManager.FindByName(User.Identity.Name)
+                };
+                ffContext.InterestedIns.Add(NewInterest);
+                ffContext.SaveChanges();
+            }
+            return RedirectToAction("Groups", new { Category = model.Category, Keyword = model.Keyword });
         }
 
-        /*protected override void Dispose(bool disposing)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public virtual ActionResult RemoveInterest(AddInterestModel model)
         {
-            if (disposing)
+            var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
+            var HasInterest = ffContext.InterestedIns.Where(i => i.Category == model.Category && i.Keyword == model.Keyword && i.UserName == UserId).FirstOrDefault();
+            if (HasInterest != null)
             {
-                ffContext.Dispose();
+                ffContext.InterestedIns.Remove(HasInterest);
+                ffContext.SaveChanges();
             }
-            base.Dispose(disposing);
-        }*/
+            return RedirectToAction("Groups", new { Category = model.Category, Keyword = model.Keyword });
+        }
+
+        public virtual ActionResult Category(string Id)
+        {
+            var retModel = new InterestViewModel();
+            retModel.Category = Id;
+            retModel.Interests = ffContext.Interests.Where(i => i.Category == retModel.Category).ToList();
+            if (retModel.Interests == null)
+                return RedirectToAction("Index");
+            return View(retModel);
+        }
     }
 }

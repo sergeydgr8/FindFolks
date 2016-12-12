@@ -1,0 +1,16 @@
+﻿@model FindFolks.Models.InterestViewModel
+@{
+    ViewBag.Title = "Category";
+}
+
+<h2>Interests under @Model.Category</h2>
+
+<div class="list-group">
+    @foreach (var i in Model.Interests)
+    {
+        <a href="@Url.Action("Groups", "Interest", i)" class="list-group-item">
+            <h3 class="list-group-item-heading">@i.Keyword <span class="pull-right"><i class="fa fa-angle-right fa-fw"></i></span></h3>
+        </a>
+    }
+</div>
+

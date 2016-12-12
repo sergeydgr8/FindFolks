@@ -3,11 +3,45 @@
     ViewBag.Title = "Groups in " + Model.Interest.Category + "::" + Model.Interest.Keyword;
 }
 
-<h2>Groups listed under @Model.Interest.Category::@Model.Interest.Keyword</h2>
+<div class="row">
+    <div class="col-md-12">
+    @if (User.Identity.IsAuthenticated)
+    {
+        if (!Model.HasInterest)
+        {
+            <div class="pull-right">
+                @using (Html.BeginForm("AddInterest", "Interest", FormMethod.Post, new { role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("Category", Model.Interest.Category)
+                    @Html.Hidden("Keyword", Model.Interest.Keyword)
+                    <button type="submit" class="btn btn-default">Add to interests</button>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="pull-right">
+                @using (Html.BeginForm("RemoveInterest", "Interest", FormMethod.Post, new { role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("Category", Model.Interest.Category)
+                    @Html.Hidden("Keyword", Model.Interest.Keyword)
+                    <button type="submit" class="btn btn-default">Remove from interests</button>
+                }
+            </div>
+        }
+    }
+    <h2>Groups listed under @Model.Interest.Category::@Model.Interest.Keyword</h2></div>
+</div>
 
-<ul>
+
+<div class="list-group">
     @foreach (var g in Model.Groups)
     {
-        <li>@g.GroupName</li>
+        <a href="@Url.Action("Info", "Groups", new { Id = g.GroupId })" class="list-group-item">
+            <h3 class="list-group-item-heading">@g.GroupName</h3>
+            <p class="list-group-item-text">@g.GroupDescription</p>
+        </a>
     }
-</ul>
+</div>

@@ -49,6 +49,8 @@ namespace FindFolks.Controllers
             foreach (var m in MemberBT)
                 MemberIds.Add(m.UserName);
             model.Members = ffContext.Users.Where(u => MemberIds.Contains(u.Id)).ToList();
+            if (!User.Identity.IsAuthenticated)
+                return View(model);
             var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
             model.IsInGroup = ffContext.BelongTos.Where(b => b.GroupId == model.Group.GroupId && b.UserName == UserId).FirstOrDefault() != null;
             model.JoinGroup = new JoinGroupModel();

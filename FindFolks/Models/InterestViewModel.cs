@@ -15,6 +15,7 @@ namespace FindFolks.Models
     {
         public Interest Interest { get; set; }
         public List<Group> Groups { get; set; }
+        public bool HasInterest { get; set; }
     }
 
     public class InterestViewModel
@@ -22,5 +23,8 @@ namespace FindFolks.Models
         public List<Interest> Interests { get; set; }
         public AddInterestModel AddInterest { get; set; }
         public GroupsInInterestModel GroupsInInterest { get; set; }
+        public string Category { get; set; }
+        public List<string> Categories { get; set; }
+        public List<Interest> UserInterests { get; set; }
     }
 }

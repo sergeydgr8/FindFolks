@@ -1,14 +1,36 @@
 ﻿@model FindFolks.Models.InterestViewModel
 
 @{
-    ViewBag.Title = "Interests";
+    ViewBag.Title = "Interest Categories";
 }
 
-<h2>Interests</h2>
-
-<ul>
-    @foreach (var i in Model.Interests)
+@if (User.Identity.IsAuthenticated)
+{
+    <h2>Your interests</h2>
+    if (Model.UserInterests == null || Model.UserInterests.Count() == 0)
     {
-        <li>@Html.ActionLink(i.Category + ": " + i.Keyword, "Groups", i)</li>
+        <h4>You don't have any! Browse below and add some.</h4>
     }
-</ul>
+    else
+    {
+        <div class="list-group">
+            @foreach (var i in Model.UserInterests)
+            {
+                <a href="@Url.Action("Groups", "Interest", new { Category = i.Category, Keyword = i.Keyword })" class="list-group-item">
+                    <h3 class="list-group-item-heading">@i.Category: @i.Keyword <span class="pull-right"><i class="fa fa-angle-right fa-fw"></i></span></h3>
+                </a>
+            }
+        </div>
+    }
+}
+
+<h2>Interest Categories</h2>
+
+<div class="list-group">
+    @foreach (var c in Model.Categories)
+    {
+        <a href="@Url.Action("Category", "Interest", new { id = c })" class="list-group-item">
+            <h3 class="list-group-item-heading">@c <span class="pull-right"><i class="fa fa-angle-right fa-fw"></i></span></h3>
+        </a>
+    }
+</div>
