@@ -1,0 +1,13 @@
+﻿@model FindFolks.Models.GroupsInInterestModel
+@{
+    ViewBag.Title = "Groups in " + Model.Interest.Category + "::" + Model.Interest.Keyword;
+}
+
+<h2>Groups listed under @Model.Interest.Category::@Model.Interest.Keyword</h2>
+
+<ul>
+    @foreach (var g in Model.Groups)
+    {
+        <li>@g.GroupName</li>
+    }
+</ul>

@@ -80,7 +80,6 @@ namespace FindFolks.Controllers
         {
             public readonly string Index = "Index";
             public readonly string About = "About";
-            public readonly string Contact = "Contact";
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -88,7 +87,6 @@ namespace FindFolks.Controllers
         {
             public const string Index = "Index";
             public const string About = "About";
-            public const string Contact = "Contact";
         }
 
 
@@ -111,11 +109,9 @@ namespace FindFolks.Controllers
             public class _ViewNamesClass
             {
                 public readonly string About = "About";
-                public readonly string Contact = "Contact";
                 public readonly string Index = "Index";
             }
             public readonly string About = "~/Views/Home/About.cshtml";
-            public readonly string Contact = "~/Views/Home/Contact.cshtml";
             public readonly string Index = "~/Views/Home/Index.cshtml";
         }
     }
@@ -145,17 +141,6 @@ namespace FindFolks.Controllers
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.About);
             AboutOverride(callInfo);
-            return callInfo;
-        }
-
-        [NonAction]
-        partial void ContactOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
-
-        [NonAction]
-        public override System.Web.Mvc.ActionResult Contact()
-        {
-            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Contact);
-            ContactOverride(callInfo);
             return callInfo;
         }
 

@@ -29,8 +29,6 @@ namespace FindFolks.EF
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            //modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-
             modelBuilder.Entity<IdentityUserLogin>().HasKey<string>(l => l.UserId);
             modelBuilder.Entity<IdentityRole>().HasKey<string>(l => l.Id);
             modelBuilder.Entity<IdentityUserRole>().HasKey(l => new { l.RoleId, l.UserId });
@@ -46,7 +44,7 @@ namespace FindFolks.EF
                 .WithMany(u => u.FriendsTo)
                 .HasForeignKey(f => f.FriendTo)
                 .WillCascadeOnDelete(false);
-
+            
 
             base.OnModelCreating(modelBuilder);
         }

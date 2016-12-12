@@ -30,6 +30,21 @@ namespace FindFolks.Controllers
             if (Request.IsAuthenticated)
             {
                 model.FirstName = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().FirstName;
+
+                var UserBelongsIn = ffContext.BelongTos.Where(u => u.UserName == User.Identity.Name).ToList();
+                var GroupIds = new List<int>();
+                foreach (var b in UserBelongsIn)
+                    GroupIds.Add(b.GroupId);
+                model.UserGroups = ffContext.Groups.Where(g => GroupIds.Contains(g.GroupId)).ToList();
+                var AllGroupEvents = ffContext.Organizes.Where(o => GroupIds.Contains(o.GroupId)).ToList();
+                var AllEventIds = new List<int>();
+                foreach (var e in AllGroupEvents)
+                    AllEventIds.Add(e.EventId);
+                var UserEvents = ffContext.SignUps.Where(s => AllEventIds.Contains(s.EventId)).ToList();
+                var EventIds = new List<int>();
+                foreach (var e in UserEvents)
+                    EventIds.Add(e.EventId);
+                model.UpcomingUserEvents = ffContext.Events.Where(e => EventIds.Contains(e.EventId) && e.Start >= DateTime.Now).ToList();
             }
 
             return View(model);
@@ -38,13 +53,6 @@ namespace FindFolks.Controllers
         public virtual ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public virtual ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
 
             return View();
         }

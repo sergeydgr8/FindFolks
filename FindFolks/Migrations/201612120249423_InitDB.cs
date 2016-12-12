@@ -13,7 +13,7 @@ namespace FindFolks.Migrations
                     {
                         Category = c.String(nullable: false, maxLength: 128),
                         Keyword = c.String(nullable: false, maxLength: 128),
-                        GroupId = c.String(nullable: false, maxLength: 128),
+                        GroupId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.Category, t.Keyword, t.GroupId })
                 .ForeignKey("dbo.Groups", t => t.GroupId, cascadeDelete: true)
@@ -25,14 +25,14 @@ namespace FindFolks.Migrations
                 "dbo.Groups",
                 c => new
                     {
-                        GroupId = c.String(nullable: false, maxLength: 128),
+                        GroupId = c.Int(nullable: false, identity: true),
                         GroupName = c.String(nullable: false),
                         GroupDescription = c.String(nullable: false),
-                        GroupCreator = c.String(maxLength: 128),
+                        UserName = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.GroupId)
-                .ForeignKey("dbo.ApplicationUsers", t => t.GroupCreator)
-                .Index(t => t.GroupCreator);
+                .ForeignKey("dbo.ApplicationUsers", t => t.UserName)
+                .Index(t => t.UserName);
             
             CreateTable(
                 "dbo.ApplicationUsers",
@@ -124,15 +124,15 @@ namespace FindFolks.Migrations
                 "dbo.BelongsToes",
                 c => new
                     {
-                        GroupId = c.String(nullable: false, maxLength: 128),
-                        Username = c.String(nullable: false, maxLength: 128),
+                        GroupId = c.Int(nullable: false),
+                        UserName = c.String(nullable: false, maxLength: 128),
                         Authorized = c.Boolean(nullable: false),
                     })
-                .PrimaryKey(t => new { t.GroupId, t.Username })
-                .ForeignKey("dbo.ApplicationUsers", t => t.Username, cascadeDelete: true)
+                .PrimaryKey(t => new { t.GroupId, t.UserName })
+                .ForeignKey("dbo.ApplicationUsers", t => t.UserName, cascadeDelete: true)
                 .ForeignKey("dbo.Groups", t => t.GroupId, cascadeDelete: true)
                 .Index(t => t.GroupId)
-                .Index(t => t.Username);
+                .Index(t => t.UserName);
             
             CreateTable(
                 "dbo.Events",
@@ -140,7 +140,7 @@ namespace FindFolks.Migrations
                     {
                         LocationName = c.String(nullable: false, maxLength: 128),
                         ZipCode = c.Int(nullable: false),
-                        EventId = c.String(nullable: false, maxLength: 128),
+                        EventId = c.Int(nullable: false, identity: true),
                         Title = c.String(nullable: false),
                         Description = c.String(nullable: false),
                         Start = c.DateTime(nullable: false),
@@ -167,22 +167,22 @@ namespace FindFolks.Migrations
                 "dbo.InterestedIns",
                 c => new
                     {
-                        Username = c.String(nullable: false, maxLength: 128),
+                        UserName = c.String(nullable: false, maxLength: 128),
                         Category = c.String(nullable: false, maxLength: 128),
                         Keyword = c.String(nullable: false, maxLength: 128),
                     })
-                .PrimaryKey(t => new { t.Username, t.Category, t.Keyword })
-                .ForeignKey("dbo.ApplicationUsers", t => t.Username, cascadeDelete: true)
+                .PrimaryKey(t => new { t.UserName, t.Category, t.Keyword })
+                .ForeignKey("dbo.ApplicationUsers", t => t.UserName, cascadeDelete: true)
                 .ForeignKey("dbo.Interests", t => new { t.Category, t.Keyword }, cascadeDelete: true)
-                .Index(t => t.Username)
+                .Index(t => t.UserName)
                 .Index(t => new { t.Category, t.Keyword });
             
             CreateTable(
                 "dbo.Organizes",
                 c => new
                     {
-                        EventId = c.String(nullable: false, maxLength: 128),
-                        GroupId = c.String(nullable: false, maxLength: 128),
+                        EventId = c.Int(nullable: false),
+                        GroupId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.EventId, t.GroupId })
                 .ForeignKey("dbo.Events", t => t.EventId, cascadeDelete: true)
@@ -194,15 +194,15 @@ namespace FindFolks.Migrations
                 "dbo.SignUps",
                 c => new
                     {
-                        EventId = c.String(nullable: false, maxLength: 128),
-                        Username = c.String(nullable: false, maxLength: 128),
+                        EventId = c.Int(nullable: false),
+                        UserName = c.String(nullable: false, maxLength: 128),
                         Rating = c.Int(nullable: false),
                     })
-                .PrimaryKey(t => new { t.EventId, t.Username })
-                .ForeignKey("dbo.ApplicationUsers", t => t.Username, cascadeDelete: true)
+                .PrimaryKey(t => new { t.EventId, t.UserName })
+                .ForeignKey("dbo.ApplicationUsers", t => t.UserName, cascadeDelete: true)
                 .ForeignKey("dbo.Events", t => t.EventId, cascadeDelete: true)
                 .Index(t => t.EventId)
-                .Index(t => t.Username);
+                .Index(t => t.UserName);
             
             CreateTable(
                 "dbo.IdentityRoles",
@@ -219,30 +219,30 @@ namespace FindFolks.Migrations
         {
             DropForeignKey("dbo.IdentityUserRoles", "IdentityRole_Id", "dbo.IdentityRoles");
             DropForeignKey("dbo.SignUps", "EventId", "dbo.Events");
-            DropForeignKey("dbo.SignUps", "Username", "dbo.ApplicationUsers");
+            DropForeignKey("dbo.SignUps", "UserName", "dbo.ApplicationUsers");
             DropForeignKey("dbo.Organizes", "GroupId", "dbo.Groups");
             DropForeignKey("dbo.Organizes", "EventId", "dbo.Events");
             DropForeignKey("dbo.InterestedIns", new[] { "Category", "Keyword" }, "dbo.Interests");
-            DropForeignKey("dbo.InterestedIns", "Username", "dbo.ApplicationUsers");
+            DropForeignKey("dbo.InterestedIns", "UserName", "dbo.ApplicationUsers");
             DropForeignKey("dbo.Events", new[] { "LocationName", "ZipCode" }, "dbo.Locations");
             DropForeignKey("dbo.BelongsToes", "GroupId", "dbo.Groups");
-            DropForeignKey("dbo.BelongsToes", "Username", "dbo.ApplicationUsers");
+            DropForeignKey("dbo.BelongsToes", "UserName", "dbo.ApplicationUsers");
             DropForeignKey("dbo.Abouts", new[] { "Category", "Keyword" }, "dbo.Interests");
             DropForeignKey("dbo.Abouts", "GroupId", "dbo.Groups");
-            DropForeignKey("dbo.Groups", "GroupCreator", "dbo.ApplicationUsers");
+            DropForeignKey("dbo.Groups", "UserName", "dbo.ApplicationUsers");
             DropForeignKey("dbo.IdentityUserRoles", "ApplicationUser_Id", "dbo.ApplicationUsers");
             DropForeignKey("dbo.IdentityUserLogins", "ApplicationUser_Id", "dbo.ApplicationUsers");
             DropForeignKey("dbo.Friends", "FriendTo", "dbo.ApplicationUsers");
             DropForeignKey("dbo.Friends", "FriendOf", "dbo.ApplicationUsers");
             DropForeignKey("dbo.IdentityUserClaims", "ApplicationUser_Id", "dbo.ApplicationUsers");
-            DropIndex("dbo.SignUps", new[] { "Username" });
+            DropIndex("dbo.SignUps", new[] { "UserName" });
             DropIndex("dbo.SignUps", new[] { "EventId" });
             DropIndex("dbo.Organizes", new[] { "GroupId" });
             DropIndex("dbo.Organizes", new[] { "EventId" });
             DropIndex("dbo.InterestedIns", new[] { "Category", "Keyword" });
-            DropIndex("dbo.InterestedIns", new[] { "Username" });
+            DropIndex("dbo.InterestedIns", new[] { "UserName" });
             DropIndex("dbo.Events", new[] { "LocationName", "ZipCode" });
-            DropIndex("dbo.BelongsToes", new[] { "Username" });
+            DropIndex("dbo.BelongsToes", new[] { "UserName" });
             DropIndex("dbo.BelongsToes", new[] { "GroupId" });
             DropIndex("dbo.IdentityUserRoles", new[] { "IdentityRole_Id" });
             DropIndex("dbo.IdentityUserRoles", new[] { "ApplicationUser_Id" });
@@ -250,7 +250,7 @@ namespace FindFolks.Migrations
             DropIndex("dbo.Friends", new[] { "FriendTo" });
             DropIndex("dbo.Friends", new[] { "FriendOf" });
             DropIndex("dbo.IdentityUserClaims", new[] { "ApplicationUser_Id" });
-            DropIndex("dbo.Groups", new[] { "GroupCreator" });
+            DropIndex("dbo.Groups", new[] { "UserName" });
             DropIndex("dbo.Abouts", new[] { "GroupId" });
             DropIndex("dbo.Abouts", new[] { "Category", "Keyword" });
             DropTable("dbo.IdentityRoles");

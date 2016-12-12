@@ -25,7 +25,7 @@ namespace FindFolks.Models
     public class Group
     {
         [Key]
-        public string GroupId { get; set; }
+        public int GroupId { get; set; }
 
         [Required]
         public string GroupName { get; set; }
@@ -33,6 +33,7 @@ namespace FindFolks.Models
         [Required]
         public string GroupDescription { get; set; }
 
+        [Column("UserName")]
         [ForeignKey("ApplicationUser")]
         public string GroupCreator { get; set; }
 
@@ -53,7 +54,7 @@ namespace FindFolks.Models
     public class InterestedIn
     {
         [Key, Column(Order = 1), ForeignKey("ApplicationUser")]
-        public string Username { get; set; }
+        public string UserName { get; set; }
 
         [Key, Column(Order = 2), ForeignKey("Interest")]
         public string Category { get; set; }
@@ -74,7 +75,7 @@ namespace FindFolks.Models
         public string Keyword { get; set; }
 
         [Key, Column(Order = 3), ForeignKey("Group")]
-        public string GroupId { get; set; }
+        public int GroupId { get; set; }
 
         public virtual Group Group { get; set; }
         public virtual Interest Interest { get; set; }
@@ -83,10 +84,10 @@ namespace FindFolks.Models
     public class BelongsTo
     {
         [Key, Column(Order = 1), ForeignKey("Group")]
-        public string GroupId { get; set; }
+        public int GroupId { get; set; }
 
         [Key, Column(Order = 2),ForeignKey("ApplicationUser")]
-        public string Username { get; set; }
+        public string UserName { get; set; }
 
         public bool Authorized { get; set; }
 
@@ -116,7 +117,7 @@ namespace FindFolks.Models
     public class Event
     {
         [Key]
-        public string EventId { get; set; }
+        public int EventId { get; set; }
 
         [Required]
         public string Title { get; set; }
@@ -144,10 +145,10 @@ namespace FindFolks.Models
     public class Organize
     {
         [Key, Column(Order = 1), ForeignKey("Event")]
-        public string EventId { get; set; }
+        public int EventId { get; set; }
 
         [Key, Column(Order = 2), ForeignKey("Group")]
-        public string GroupId { get; set; }
+        public int GroupId { get; set; }
 
         public virtual Event Event { get; set; }
         public virtual Group Group { get; set; }
@@ -156,10 +157,10 @@ namespace FindFolks.Models
     public class SignUp
     {
         [Key, Column(Order = 1), ForeignKey("Event")]
-        public string EventId { get; set; }
+        public int EventId { get; set; }
 
         [Key, Column(Order = 2), ForeignKey("ApplicationUser")]
-        public string Username { get; set; }
+        public string UserName { get; set; }
 
         public int Rating { get; set; }
 

@@ -13,7 +13,7 @@ namespace FindFolks.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201612110847249_InitDB"; }
+            get { return "201612120249423_InitDB"; }
         }
         
         string IMigrationMetadata.Source

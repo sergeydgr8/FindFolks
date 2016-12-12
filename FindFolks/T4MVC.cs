@@ -29,6 +29,8 @@ public static partial class MVC
 {
     public static FindFolks.Controllers.AccountController Account = new FindFolks.Controllers.T4MVC_AccountController();
     public static FindFolks.Controllers.HomeController Home = new FindFolks.Controllers.T4MVC_HomeController();
+    public static T4MVC.GroupsController Groups = new T4MVC.GroupsController();
+    public static T4MVC.InterestController Interest = new T4MVC.InterestController();
     public static T4MVC.SharedController Shared = new T4MVC.SharedController();
 }
 
@@ -95,6 +97,7 @@ namespace Links
         public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(UrlPath + "/" + fileName); }
         public static readonly string bootstrap_css = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(UrlPath + "/bootstrap.min.css") ? Url("bootstrap.min.css") : Url("bootstrap.css");
         public static readonly string bootstrap_min_css = Url("bootstrap.min.css");
+        public static readonly string font_awesome_min_css = Url("font-awesome.min.css");
         public static readonly string Site_css = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(UrlPath + "/Site.min.css") ? Url("Site.min.css") : Url("Site.css");
     }
 
@@ -127,6 +130,7 @@ namespace Links
             {
                 public const string bootstrap_css = "~/Content/bootstrap.css";
                 public const string bootstrap_min_css = "~/Content/bootstrap.min.css";
+                public const string font_awesome_min_css = "~/Content/font-awesome.min.css";
                 public const string Site_css = "~/Content/Site.css";
             }
         }

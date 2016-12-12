@@ -23,10 +23,10 @@
                 <ul class="nav navbar-nav">
                     @if (Request.IsAuthenticated)
                     {
-                        <li><a href="#">Groups</a></li>
-                        <li><a href="#">Interests</a></li>
-                        <li><a href="#">Friends</a></li>
-                        <li><a href="#">Events</a></li>
+                        <li>@Html.ActionLink("Groups", "Index", "Groups")</li>
+                        <li>@Html.ActionLink("Interests", "Index", "Interest")</li>
+                        <li>@Html.ActionLink("Friends", "Index", "Friends")</li>
+                        <li>@Html.ActionLink("Events", "Index", "Events")</li>
                     }
                     <li>@Html.ActionLink("About", MVC.Home.About())</li>
                 </ul>

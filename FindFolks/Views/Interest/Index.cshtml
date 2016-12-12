@@ -1,0 +1,14 @@
+﻿@model FindFolks.Models.InterestViewModel
+
+@{
+    ViewBag.Title = "Interests";
+}
+
+<h2>Interests</h2>
+
+<ul>
+    @foreach (var i in Model.Interests)
+    {
+        <li>@Html.ActionLink(i.Category + ": " + i.Keyword, "Groups", i)</li>
+    }
+</ul>

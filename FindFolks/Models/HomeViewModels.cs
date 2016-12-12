@@ -12,5 +12,7 @@ namespace FindFolks.Models
         public List<Event> UpcomingEvents { get; set; }
         public List<Interest> Interests { get; set; }
         public string FirstName { get; set; }
+        public List<Event> UpcomingUserEvents { get; set; }
+        public List<Group> UserGroups { get; set; }
     }
 }
