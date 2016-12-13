@@ -40,6 +40,11 @@ namespace FindFolks.Controllers
             foreach (var s in signUps)
                 userNames.Add(s.UserName);
             model.Attendees = ffContext.Users.Where(u => userNames.Contains(u.Id)).ToList();
+            if (User.Identity.IsAuthenticated)
+            {
+                model.Attending = model.Attendees.Contains(ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault());
+                model.UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
+            }
             return model;
         }
 
@@ -107,6 +112,25 @@ namespace FindFolks.Controllers
             var model = EventModelHelper(ev);
             
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SignUp(SignUpToEventModel model)
+        {
+            if (model == null)
+                return RedirectToAction("Index");
+            var signUp = new SignUp()
+            {
+                Event = ffContext.Events.Where(e => e.EventId == model.EventId).FirstOrDefault(),
+                EventId = model.EventId,
+                ApplicationUser = ffContext.Users.Where(u => u.Id == model.UserId).FirstOrDefault(),
+                UserName = model.UserId
+            };
+            ffContext.SignUps.Add(signUp);
+            ffContext.SaveChanges();
+            return RedirectToAction("Info", new { Id = model.EventId });
+
         }
     }
 }

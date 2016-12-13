@@ -87,6 +87,12 @@ namespace FindFolks.Controllers
                 model.Members.Add(NewMember);
             }
 
+            var organizes = ffContext.Organizes.Where(o => o.GroupId == Id).ToList();
+            var eventIds = new List<int>();
+            foreach (var o in organizes)
+                eventIds.Add(o.EventId);
+            model.Events = GetEventsViewHelper(ffContext.Events.Where(e => eventIds.Contains(e.EventId)).ToList());
+
             if (!User.Identity.IsAuthenticated)
                 return View(model);
             var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
@@ -96,12 +102,6 @@ namespace FindFolks.Controllers
             model.JoinGroup = new JoinGroupModel();
             model.JoinGroup.GroupId = model.Group.GroupId;
             model.JoinGroup.UserId = UserId;
-
-            var organizes = ffContext.Organizes.Where(o => o.GroupId == Id).ToList();
-            var eventIds = new List<int>();
-            foreach (var o in organizes)
-                eventIds.Add(o.EventId);
-            model.Events = GetEventsViewHelper(ffContext.Events.Where(e => eventIds.Contains(e.EventId)).ToList());
 
             return View(model);
         }

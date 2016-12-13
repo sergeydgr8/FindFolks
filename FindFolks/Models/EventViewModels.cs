@@ -15,6 +15,8 @@ namespace FindFolks.Models
         public int ZipCode { get; set; }
         public string GroupName { get; set; }
         public int GroupId { get; set; }
+        public bool Attending { get; set; }
+        public string UserId { get; set; }
         public List<ApplicationUser> Attendees { get; set; }
     }
 
@@ -25,6 +27,12 @@ namespace FindFolks.Models
         public List<EventInfoModel> UserInterestedEvents { get; set; }
         public List<EventInfoModel> UserUpcomingEvents { get; set; }
         public List<EventInfoModel> UserCurrentEvents { get; set; }
+    }
+
+    public class SignUpToEventModel
+    {
+        public int EventId { get; set; }
+        public string UserId { get; set; }
     }
 
 }

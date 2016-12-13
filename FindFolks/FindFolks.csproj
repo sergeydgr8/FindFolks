@@ -171,6 +171,7 @@
     <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InterestController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="EF\FFContext.cs" />
     <Compile Include="EF\FFInitializer.cs" />
     <Compile Include="Extensions\IdentityExtensions.cs" />
@@ -198,6 +199,7 @@
     <Compile Include="Models\HomeViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\InterestViewModel.cs" />
+    <Compile Include="Models\UserViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharedController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
@@ -303,6 +305,7 @@
     <Content Include="Views\Groups\CreateEvent.cshtml" />
     <Content Include="Views\Events\Index.cshtml" />
     <Content Include="Views\Events\Info.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
