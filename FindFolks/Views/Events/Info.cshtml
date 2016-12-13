@@ -1,0 +1,18 @@
+﻿@model FindFolks.Models.EventInfoModel
+@{
+    ViewBag.Title = @Model.Title;
+}
+
+<h2>@Model.Title</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h4><i class="fa fa-calendar fa-fw"></i> @Model.Start.ToString()</h4>
+        <h4><i class="fa fa-info-circle fa-fw"></i> @Model.Description</h4>
+        <h4><i class="fa fa-map-pin fa-fw"></i> @Model.Location in @Model.ZipCode</h4>
+        <h4><a href="@Url.Action("Info", "Groups", new { Id = Model.GroupId })"><i class="fa fa-group fa-fw"></i> @Model.GroupName</a></h4>
+    </div>
+    <div class="col-md-6">
+        <h3>Leave a rating...</h3>
+    </div>
+</div>

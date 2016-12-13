@@ -37,6 +37,33 @@ namespace FindFolks.Controllers
             return View(model);
         }
 
+        public EventInfoModel EventModelHelper(Event e)
+        {
+            var model = new EventInfoModel();
+            model.Id = e.EventId;
+            model.Title = e.Title;
+            model.Description = e.Description;
+            model.Start = e.Start;
+            model.Location = e.LocationName;
+            model.ZipCode = e.ZipCode;
+            model.GroupId = ffContext.Organizes.Where(o => o.EventId == e.EventId).FirstOrDefault().GroupId;
+            model.GroupName = ffContext.Groups.Where(g => g.GroupId == model.GroupId).FirstOrDefault().GroupName;
+            var signUps = ffContext.SignUps.Where(s => s.EventId == e.EventId).ToList();
+            var userNames = new List<string>();
+            foreach (var s in signUps)
+                userNames.Add(s.UserName);
+            model.Attendees = ffContext.Users.Where(u => userNames.Contains(u.Id)).ToList();
+            return model;
+        }
+
+        public List<EventInfoModel> GetEventsViewHelper(List<Event> l)
+        {
+            var ret = new List<EventInfoModel>();
+            foreach (var e in l)
+                ret.Add(EventModelHelper(e));
+            return ret;
+        }
+
         public ActionResult Info(int Id = 0)
         {
             var model = new GroupInfoModel();
@@ -59,7 +86,7 @@ namespace FindFolks.Controllers
                 NewMember.Authorized = ffContext.BelongTos.Where(u => u.UserName == member.Id && u.GroupId == Id).FirstOrDefault().Authorized;
                 model.Members.Add(NewMember);
             }
-            //model.Members = ffContext.Users.Where(u => MemberIds.Contains(u.Id)).ToList();
+
             if (!User.Identity.IsAuthenticated)
                 return View(model);
             var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
@@ -69,6 +96,13 @@ namespace FindFolks.Controllers
             model.JoinGroup = new JoinGroupModel();
             model.JoinGroup.GroupId = model.Group.GroupId;
             model.JoinGroup.UserId = UserId;
+
+            var organizes = ffContext.Organizes.Where(o => o.GroupId == Id).ToList();
+            var eventIds = new List<int>();
+            foreach (var o in organizes)
+                eventIds.Add(o.EventId);
+            model.Events = GetEventsViewHelper(ffContext.Events.Where(e => eventIds.Contains(e.EventId)).ToList());
+
             return View(model);
         }
 
@@ -165,6 +199,7 @@ namespace FindFolks.Controllers
             return RedirectToAction("Info", new { id = model.GroupId });
         }
 
+        // GET: CreateEvent
         public ActionResult CreateEvent(int GroupId)
         {
             var model = new CreateEventModel();
@@ -175,6 +210,7 @@ namespace FindFolks.Controllers
             return PartialView(model);
         }
 
+        // POST: CreateEvent
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateEvent(CreateEventModel model)

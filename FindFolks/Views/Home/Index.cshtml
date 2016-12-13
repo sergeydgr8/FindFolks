@@ -44,7 +44,7 @@ else
                     <div class="list-group">
                         @foreach (var e in Model.UpcomingUserEvents)
                         {
-                            <a class="list-group-item" href="#">@e.Title</a>
+                            <a class="list-group-item" href="@Url.Action("Info", "Events", new { Id = e.EventId })">@e.Title</a>
                         }
                     </div>
                 }
@@ -62,12 +62,12 @@ else
         }
         else
         {
-            <ul class="list-group">
+            <div class="list-group">
                 @foreach (var e in Model.UpcomingEvents)
                 {
-                    <li class="list-group-item">@e.Start.ToShortDateString(): @e.Title</li>
+                    <a href="@Url.Action("Info", "Events", new { Id = e.EventId })" class="list-group-item">@e.Start.ToShortDateString(): @e.Title</a>
                 }
-            </ul>
+            </div>
         }
     </div>
     <div class="col-md-6">

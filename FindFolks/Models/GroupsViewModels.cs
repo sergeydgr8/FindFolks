@@ -24,7 +24,7 @@ namespace FindFolks.Models
         public Group Group { get; set; }
         public string GroupCreator { get; set; }
         public List<GroupMemberModel> Members { get; set; }
-        public List<Event> Events { get; set; }
+        public List<EventInfoModel> Events { get; set; }
         public bool IsInGroup { get; set; }
         public JoinGroupModel JoinGroup { get; set; }
         public bool Authorized { get; set; }

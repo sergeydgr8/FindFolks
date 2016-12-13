@@ -24,34 +24,89 @@ namespace FindFolks.Controllers
             this.UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(this.ffContext));
         }
 
+        public EventInfoModel EventModelHelper(Event e)
+        {
+            var model = new EventInfoModel();
+            model.Id = e.EventId;
+            model.Title = e.Title;
+            model.Description = e.Description;
+            model.Start = e.Start;
+            model.Location = e.LocationName;
+            model.ZipCode = e.ZipCode;
+            model.GroupId = ffContext.Organizes.Where(o => o.EventId == e.EventId).FirstOrDefault().GroupId;
+            model.GroupName = ffContext.Groups.Where(g => g.GroupId == model.GroupId).FirstOrDefault().GroupName;
+            var signUps = ffContext.SignUps.Where(s => s.EventId == e.EventId).ToList();
+            var userNames = new List<string>();
+            foreach (var s in signUps)
+                userNames.Add(s.UserName);
+            model.Attendees = ffContext.Users.Where(u => userNames.Contains(u.Id)).ToList();
+            return model;
+        }
+
+        public List<EventInfoModel> GetEventsViewHelper(List<Event> l)
+        {
+            var ret = new List<EventInfoModel>();
+            foreach (var e in l)
+                ret.Add(EventModelHelper(e));
+            return ret;
+        }
+
         // GET: Events
         public ActionResult Index()
         {
             var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
             var model = new EventsIndexModel();
-            model.AllUpcomingEvents = ffContext.Events.Where(e => e.Start >= DateTime.Now).ToList();
-            model.AllHappeningNow = ffContext.Events.Where(e => e.Start <= DateTime.Now && e.End >= DateTime.Now).ToList();
+            model.AllUpcomingEvents = GetEventsViewHelper(ffContext.Events.Where(e => e.Start >= DateTime.Now).ToList());
+            model.AllHappeningNow = GetEventsViewHelper(ffContext.Events.Where(e => e.Start <= DateTime.Now && e.End >= DateTime.Now).ToList());
             var EventsUserAttends = ffContext.SignUps.Where(s => s.UserName == UserId).ToList();
             var EventIdsUserAttends = new List<int>();
             foreach (var e in EventsUserAttends)
             {
                 EventIdsUserAttends.Add(e.EventId);
             }
-            model.UserUpcomingEvents = ffContext.Events.Where(e => EventIdsUserAttends.Contains(e.EventId) && e.Start >= DateTime.Now).ToList();
-            model.UserCurrentEvents = ffContext.Events.Where(e => EventIdsUserAttends.Contains(e.EventId) && e.Start <= DateTime.Now && e.End >= DateTime.Now).ToList();
+            model.UserUpcomingEvents = GetEventsViewHelper(ffContext.Events.Where(e => EventIdsUserAttends.Contains(e.EventId) && e.Start >= DateTime.Now).ToList());
+            model.UserCurrentEvents = GetEventsViewHelper(ffContext.Events.Where(e => EventIdsUserAttends.Contains(e.EventId) && e.Start <= DateTime.Now && e.End >= DateTime.Now).ToList());
             
-            // interests
+            // logic for finding events from groups user could be interested about
             var UserInterestIns = ffContext.InterestedIns.Where(i => i.UserName == UserId).ToList();
             var UserInterests = new List<Interest>();
             foreach (var i in UserInterestIns)
             {
                 UserInterests.Add(new Interest() { Category = i.Category, Keyword = i.Keyword });
             }
-            var Abouts = ffContext.Abouts.Where(a => UserInterests.Contains(new Interest() { Category = a.Category, Keyword = a.Keyword })).ToList();
-            
+            var Abouts = new List<About>();
+            foreach (var i in UserInterests)
+            {
+                var tempAbouts = ffContext.Abouts.Where(a => a.Category == i.Category && a.Keyword == i.Keyword).ToList();
+                if (tempAbouts != null)
+                    foreach (var a in tempAbouts)
+                        Abouts.Add(a);
+            }
+            var GroupIds = new List<int>();
+            foreach (var a in Abouts)
+                GroupIds.Add(a.GroupId);
+            var EventIdsMaybeInterested = new List<int>();
+            var OrganizesQueries = ffContext.Organizes.Where(o => GroupIds.Contains(o.GroupId)).ToList();
+            foreach (var o in OrganizesQueries)
+                EventIdsMaybeInterested.Add(o.EventId);
+            var timeNow = DateTime.Now;
+            var timeWeek = timeNow.AddDays(7);
+            model.UserInterestedEvents = GetEventsViewHelper(ffContext.Events.Where(e => EventIdsMaybeInterested.Contains(e.EventId) && e.Start >= timeNow && e.Start <= timeWeek).ToList());
 
             return View(model);
         }
 
+
+        public ActionResult Info(int Id = 0)
+        {
+            if (Id == 0)
+                return RedirectToAction("Index");
+            var ev = ffContext.Events.Where(e => e.EventId == Id).FirstOrDefault();
+            if (ev == null)
+                return RedirectToAction("Index");
+            var model = EventModelHelper(ev);
+            
+            return View(model);
+        }
     }
 }
