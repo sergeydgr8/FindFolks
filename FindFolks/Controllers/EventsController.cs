@@ -44,6 +44,8 @@ namespace FindFolks.Controllers
             {
                 model.Attending = model.Attendees.Contains(ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault());
                 model.UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
+                var signedUp = ffContext.SignUps.Where(s => s.EventId == model.Id && s.UserName == model.UserId).FirstOrDefault();
+                model.Rating = signedUp != null ? signedUp.Rating : 0;
             }
             return model;
         }
@@ -59,6 +61,8 @@ namespace FindFolks.Controllers
         // GET: Events
         public ActionResult Index()
         {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Account");
             var UserId = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault().Id;
             var model = new EventsIndexModel();
             model.AllUpcomingEvents = GetEventsViewHelper(ffContext.Events.Where(e => e.Start >= DateTime.Now).ToList());
@@ -131,6 +135,20 @@ namespace FindFolks.Controllers
             ffContext.SaveChanges();
             return RedirectToAction("Info", new { Id = model.EventId });
 
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateRating(RateEventModel model)
+        {
+            var ffEvent = ffContext.Events.Where(e => e.EventId == model.EventId).FirstOrDefault();
+            if (ffEvent == null || ffEvent.Start >= DateTime.Now || ffContext.SignUps.Where(s => s.EventId == model.EventId && s.UserName == model.UserId) == null)
+                return RedirectToAction("Info", new { Id = model.EventId });
+            var signUp = ffContext.SignUps.Where(s => s.UserName == model.UserId && s.EventId == model.EventId).FirstOrDefault();
+            signUp.Rating = model.Rating;
+            ffContext.SaveChanges();
+            return RedirectToAction("Info", new { Id = model.EventId });
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -18,6 +19,17 @@ namespace FindFolks.Models
         public bool Attending { get; set; }
         public string UserId { get; set; }
         public List<ApplicationUser> Attendees { get; set; }
+
+        [Display(Name = "Rate the event")]
+        public int Rating { get; set; }
+
+    }
+
+    public class RateEventModel
+    {
+        public int EventId { get; set; }
+        public string UserId { get; set; }
+        public int Rating { get; set; }
     }
 
     public class EventsIndexModel
@@ -27,6 +39,7 @@ namespace FindFolks.Models
         public List<EventInfoModel> UserInterestedEvents { get; set; }
         public List<EventInfoModel> UserUpcomingEvents { get; set; }
         public List<EventInfoModel> UserCurrentEvents { get; set; }
+        public List<EventInfoModel> PastAttendedEvents { get; set; }
     }
 
     public class SignUpToEventModel

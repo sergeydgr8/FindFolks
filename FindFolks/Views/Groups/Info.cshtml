@@ -34,13 +34,33 @@
         <h2>@Model.Group.GroupName</h2>
         <h4>@Model.Group.GroupDescription</h4>
         <h4>Created by @Model.GroupCreator</h4>
+        @if (Model.IsInGroup)
+        {
+            var RatingString = "";
+            if (Model.RatingString != "N/A")
+            {
+                var fullStarsNum = (int)Math.Floor(Model.Rating);
+                var halfStarNum = Model.Rating - Math.Floor(Model.Rating) >= 0.5 ? 1 : 0;
+                var emptyStarsNum = 5 - fullStarsNum;
+                var fullStars = String.Concat(Enumerable.Repeat("<i class=\"fa fa-star fa-fw\"></i>", fullStarsNum));
+                var halfStar = String.Concat(Enumerable.Repeat("<i class=\"fa fa-star-half-o fa-fw\"></i>", halfStarNum));
+                var emptyStars = String.Concat(Enumerable.Repeat("<i class=\"fa fa-star-o fa-fw\"></i>", emptyStarsNum));
+                RatingString = fullStars + halfStar + emptyStars;
+            }
+            else
+            {
+                RatingString = "N/A";
+            }
+
+            <h4>Average rating of events for the last week: @Html.Raw(RatingString)</h4>
+        }
     </div>
 </div>
 
 <hr />
 
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Members</h3>
@@ -61,7 +81,7 @@
         </div>
         
     </div>
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h3 class="panel-title">Events @if (Model.Authorized){<span class="pull-right"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#CreateEventModal"><i class="fa fa-pencil fa-fw"></i> Create event</button></span>}</h3>
@@ -88,9 +108,6 @@
                 </div>
             }
         </div>
-    </div>
-    <div class="col-md-3">
-        <h3>Average rating</h3>
     </div>
 </div>
 

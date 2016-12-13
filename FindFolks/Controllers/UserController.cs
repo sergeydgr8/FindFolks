@@ -38,7 +38,7 @@ namespace FindFolks.Controllers
             if (User.Identity.IsAuthenticated)
                 CurrentUser = ffContext.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
             if (CurrentUser == null)
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "Account");
             if (Id == null)
             {
                 return View(CreateUserModel(CurrentUser));

@@ -3,6 +3,18 @@
     ViewBag.Title = @Model.Title;
 }
 
+
+@{
+    var RatingList = new List<SelectListItem>();
+    for (int i = 0; i <= 5; i++)
+    {
+        RatingList.Add(new SelectListItem()
+            {
+                Text = i.ToString(),
+                Value = i.ToString()
+            });
+    }
+}
 <h2>@Model.Title</h2>
 <hr />
 <div class="row">
@@ -19,6 +31,17 @@
                 @Html.Hidden("EventId", Model.Id)
                 @Html.Hidden("UserId", Model.UserId)
                 <button class="btn btn-info" type="submit">Sign up!</button>
+            }
+        }
+        @if (Model.Attending && Model.Start <= DateTime.Now)
+        {
+            using (Html.BeginForm("UpdateRating", "Events", FormMethod.Post, new { role = "form", @id = "RatingForm" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("EventId", Model.Id)
+                @Html.Hidden("UserId", Model.UserId)
+                @Html.LabelFor(m => m.Rating, new { @class = "control-label" })
+                @Html.DropDownListFor(m => m.Rating, RatingList, new { @class = "form-control", @id = "RatingFormDropdown" })
             }
         }
 
@@ -40,3 +63,9 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $('#RatingFormDropdown').change(function () {
+        $('#RatingForm').submit();
+    });
+</script>

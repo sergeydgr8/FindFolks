@@ -70,7 +70,8 @@ namespace FindFolks.Controllers
             model.Group = ffContext.Groups.Where(g => g.GroupId == Id).FirstOrDefault();
             if (model.Group == null)
                 return RedirectToAction("Index");
-            model.GroupCreator = ffContext.Users.Where(u => u.Id == model.Group.GroupCreator).FirstOrDefault().UserName;
+            var creator = ffContext.Users.Where(u => u.Id == model.Group.GroupCreator).FirstOrDefault();
+            model.GroupCreator = creator.FirstName + " " + creator.LastName;
             var MemberBT = ffContext.BelongTos.Where(b => b.GroupId == model.Group.GroupId).ToList();
             var MemberIds = new List<string>();
             foreach (var m in MemberBT)
@@ -103,12 +104,33 @@ namespace FindFolks.Controllers
             model.JoinGroup.GroupId = model.Group.GroupId;
             model.JoinGroup.UserId = UserId;
 
+            // rating calculation logic
+            var lastWeek = DateTime.Now.Subtract(new TimeSpan(7, 0, 0, 0, 0));
+            var EventsLast7Days = ffContext.Events.Where(e => eventIds.Contains(e.EventId) && e.Start >= lastWeek && e.Start <= DateTime.Now).ToList();
+            var EventIdsLast7Days = new List<int>();
+            foreach (var e in EventsLast7Days)
+                EventIdsLast7Days.Add(e.EventId);
+            var SignUpsLast7 = ffContext.SignUps.Where(s => EventIdsLast7Days.Contains(s.EventId)).ToList();
+            if (SignUpsLast7 != null && SignUpsLast7.Count() != 0)
+            {
+                var total = 0;
+                foreach (var s in SignUpsLast7)
+                    total += s.Rating;
+                var rating = total / SignUpsLast7.Count();
+                model.RatingString = rating.ToString() + "/5";
+                model.Rating = rating;
+            }
+            else
+                model.RatingString = "N/A";
+
             return View(model);
         }
 
         // GET: CreateGroup
         public ActionResult CreateGroup()
         {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Account");
             return View();
         }
 
@@ -202,6 +224,8 @@ namespace FindFolks.Controllers
         // GET: CreateEvent
         public ActionResult CreateEvent(int GroupId)
         {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Account");
             var model = new CreateEventModel();
             model.GroupId = GroupId;
             model.Locations = ffContext.Locations.ToList();

@@ -28,6 +28,8 @@ namespace FindFolks.Models
         public bool IsInGroup { get; set; }
         public JoinGroupModel JoinGroup { get; set; }
         public bool Authorized { get; set; }
+        public double Rating { get; set; }
+        public string RatingString { get; set; }
     }
 
     public class CreateGroupModel
