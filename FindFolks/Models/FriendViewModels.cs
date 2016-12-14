@@ -8,6 +8,7 @@ namespace FindFolks.Models
     public class ListFriendsModel
     {
         public List<ApplicationUser> Friends { get; set; }
+        public List<EventInfoModel> Events { get; set; }
     }
 
     public class AddFriendModel
