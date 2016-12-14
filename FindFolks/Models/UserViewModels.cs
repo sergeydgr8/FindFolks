@@ -14,5 +14,7 @@ namespace FindFolks.Models
         public string ZipCode { get; set; }
         public bool CurrentUser { get; set; }
         public bool IsFriend { get; set; }
+        public List<EventInfoModel> Events { get; set; }
+        public List<ApplicationUser> Friends { get; set; }
     }
 }
