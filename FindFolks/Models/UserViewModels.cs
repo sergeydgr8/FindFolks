@@ -12,5 +12,7 @@ namespace FindFolks.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string ZipCode { get; set; }
+        public bool CurrentUser { get; set; }
+        public bool IsFriend { get; set; }
     }
 }

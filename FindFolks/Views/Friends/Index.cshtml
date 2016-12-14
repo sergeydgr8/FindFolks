@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FindFolks.Models.Friend>
+﻿@model FindFolks.Models.ListFriendsModel
 
 @{
     ViewBag.Title = "Your friends";
@@ -6,3 +6,37 @@
 
 <h2>Your friends</h2>
 
+@if (Model.Friends == null || Model.Friends.Count() == 0)
+{
+    <h4>Looks like you don't have any! Why not add some from events you've attended with them?</h4>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">People you have added</h3>
+                </div>
+                <div class="list-group">
+                    @foreach (var f in Model.Friends)
+                    {
+                        <a href="@Url.Action("Index", "User", new { Id = f.UserName })" class="list-group-item">
+                            <h4 class="list-group-item-heading">@f.LastName, @f.FirstName</h4>
+                            <p class="list-group-item-text"><i class="fa fa-user fa-fw"></i> @f.UserName</p>
+                            <p class="list-group-item-text"><i class="fa fa-location-arrow fa-fw"></i> @f.ZipCode</p>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Upcoming events friends signed up to</h3>
+                </div>
+                <div class="panel-body">temp</div>
+            </div>
+        </div>
+    </div>
+}

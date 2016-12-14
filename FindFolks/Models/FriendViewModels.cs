@@ -5,8 +5,13 @@ using System.Web;
 
 namespace FindFolks.Models
 {
-    class ListFriendsModel
+    public class ListFriendsModel
     {
         public List<ApplicationUser> Friends { get; set; }
+    }
+
+    public class AddFriendModel
+    {
+        public string UserName { get; set; }
     }
 }
